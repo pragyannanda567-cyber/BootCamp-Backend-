@@ -7,7 +7,7 @@ const createUser = async (req,res)=> {
         
         const {name, email, empId} = req.body
 
-        // console.log(name, email, empId)
+        console.log(name, email, empId)
 
         if(!name || !email || !empId){
            return res.status(404).json({
@@ -18,7 +18,7 @@ const createUser = async (req,res)=> {
 
         const user = await User.create({name, email, empId})
 
-        console.log(user)
+        console.log(user) 
 
         // send response to user
 
@@ -36,8 +36,6 @@ const createUser = async (req,res)=> {
     }
 }
 
-
-
 const getUser  = async (req, res) =>{
     try {
         const user = await User.find()
@@ -51,7 +49,8 @@ const getUser  = async (req, res) =>{
 
         res.status(200).json({
             success:true,
-            user
+            user,
+            message:'data fetched successfully...'
         })
 
 
@@ -79,10 +78,8 @@ const updateUser = async(req,res)=>{
         }
 
         let updatedUser = user
-
-
         if(name){
-            updatedUser = await User.findByIdAndUpdate(userid, {name}, {new:true})
+            updatedUser = await User.findByIdAndUpdate(userid, {name} ,{new:true})
         }
         
         if(email){
@@ -98,8 +95,8 @@ const updateUser = async(req,res)=>{
 
         res.status(200).json({
             message:'data updated successfully...',
-            updateUser,
-            success:true
+            success:true,
+            data:updatedUser
         })
 
     } catch (error) {
@@ -109,7 +106,6 @@ const updateUser = async(req,res)=>{
             })
     }
 }
-
 
 
 const deleteUser = async (req,res)=>{
@@ -123,11 +119,6 @@ const deleteUser = async (req,res)=>{
         message:'user deleted successfully....',
         deleteUser
        })
-
-
-
-        
-
 
     } catch (error) {
         res.status(500).json({
