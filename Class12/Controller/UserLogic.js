@@ -108,20 +108,23 @@ const login = async (req, res) => {
 
 
 
-let students = ['ankit', 'rahul', 'priya']
+let users = ['ankit', 'rahul', 'priya']
 
 
 
-const getuser = async (req, res) => {
-    try {
-        res.send(students)
-    } catch (error) {
-
+    const getuser = async (req, res) => {
+        try {
+            let userid = req.userid
+            console.log('getuser ',userid)
+            res.send(users)
+        } catch (error) {
+            res.json({
+                message:'failed to get data'
+            })
+        }
     }
-}
 
-
-
+export {getuser}
 
 
 
