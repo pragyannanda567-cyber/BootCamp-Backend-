@@ -1,7 +1,7 @@
 import express from 'express'
 import { login, signup } from '../Controller/UserLogic.js'
-import { getuser } from '../Controller/UserLogic.js'
-import { auth, checkAdmin } from '../Middleware/Auth.js'
+import { getuser } from '../Controller/StudentLogic.js'
+import { auth } from '../Middleware/Auth.js'
 
 const router = express.Router()
 
