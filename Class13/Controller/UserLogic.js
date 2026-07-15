@@ -1,127 +1,117 @@
 import User from "../Models/User.js";
-import jsonwebtoken from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import jsonwebtoken from 'jsonwebtoken'
 
+
+import bcrypt from 'bcrypt'
 const signup = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        let { name, email, password, role } = req.body
 
-        // Validation
         if (!name || !email || !password || !role) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required."
-            });
+            return res.status(404).json({
+                message: 'data not found for user creation....',
+                success: false
+            })
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
+        let existingUser = await User.findOne({ email })
 
         if (existingUser) {
             return res.status(409).json({
+                message: 'user already exist with this email id ....',
                 success: false,
-                message: "User already exists with this email."
-            });
+
+            })
         }
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        let hashpassword;
 
-        // Create user
-        const user = await User.create({
-            name,
-            email,
-            role,
-            password: hashedPassword
-        });
+        try {
+            hashpassword = await bcrypt.hash(password, 10)
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                message: 'could not hashed password....'
+            })
 
-        // Remove password from response
-        const newUser = user.toObject();
-        delete newUser.password;
+        }
 
-        return res.status(201).json({
+
+
+        let user = await User.create({ name, email, role, password: hashpassword })
+
+        res.status(200).json({
             success: true,
-            message: "User created successfully.",
-            user: newUser
-        });
+            message: 'user created successfully....',
+            user
+        })
+
 
     } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({
+        res.status(500).json({
             success: false,
-            message: "Internal server error.",
-            error: error.message
-        });
+            message: 'internal server error', error
+        })
     }
-};
+}
+
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        // Validation
+        const { email, password } = req.body
         if (!email || !password) {
-            return res.status(400).json({
+            return res.status(404).json({
                 success: false,
-                message: "Email and password are required."
-            });
+                message: 'data not found for login....'
+            })
         }
 
-        // Find user
-        const user = await User.findOne({ email });
+        let user = await User.findOne({email})
 
         if (!user) {
-            return res.status(401).json({
+            return res.status(401).josn({
                 success: false,
-                message: "User not found."
-            });
-        }
-
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid password."
-            });
-        }
-
-        // Generate JWT Token
-        const token = jsonwebtoken.sign(
-            { userId: user._id },
-            process.env.JWT_SECRET || "studentKey",
-            { expiresIn: "3d" }
-        );
-
-        // Remove password from response
-        const loggedInUser = user.toObject();
-        delete loggedInUser.password;
-
-        // Send Cookie
-        return res
-            .cookie("tokenCookie", token, {
-                httpOnly: true,
-                maxAge: 3 * 24 * 60 * 60 * 1000
+                message: 'user not found  by this  email id ...'
             })
-            .status(200)
-            .json({
-                success: true,
-                message: "Login successful.",
-                token,
-                user: loggedInUser
-            });
+        }
+
+
+
+
+        if (await bcrypt.compare(password, user.password)) {
+
+            let token = jsonwebtoken.sign({ userid: user._id }, 'studentKey', { expiresIn: '3d' })
+
+
+            res.cookie('tokenCookie', token, { maxAage: 3 * 24 * 60 * 60 * 1000 })
+                .status(200).json({
+                    success: true,
+                    token,
+                    message: 'user created successfully....'
+                })
+
+        } else {
+            return res.status(401).json({
+                message: 'invalid password..',
+                success: false
+            })
+        }
+
 
     } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({
+        console.log(error)
+        res.status(500).json({
             success: false,
-            message: "Failed to login.",
-            error: error.message
-        });
+            message: 'failed to login',error
+        })
     }
-};
+}
 
-export { signup, login };
+
+
+
+
+
+export { signup, login }
+
+
