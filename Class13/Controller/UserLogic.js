@@ -1,117 +1,127 @@
 import User from "../Models/User.js";
-import jsonwebtoken from 'jsonwebtoken'
+import jsonwebtoken from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
-
-import bcrypt from 'bcrypt'
 const signup = async (req, res) => {
     try {
-        let { name, email, password, role } = req.body
+        const { name, email, password, role } = req.body;
 
+        // Validation
         if (!name || !email || !password || !role) {
-            return res.status(404).json({
-                message: 'data not found for user creation....',
-                success: false
-            })
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required."
+            });
         }
 
-        let existingUser = await User.findOne({ email })
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(409).json({
-                message: 'user already exist with this email id ....',
                 success: false,
-
-            })
+                message: "User already exists with this email."
+            });
         }
 
-        let hashpassword;
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        try {
-            hashpassword = await bcrypt.hash(password, 10)
-        } catch (error) {
-            return res.status(400).json({
-                success: false,
-                message: 'could not hashed password....'
-            })
+        // Create user
+        const user = await User.create({
+            name,
+            email,
+            role,
+            password: hashedPassword
+        });
 
-        }
+        // Remove password from response
+        const newUser = user.toObject();
+        delete newUser.password;
 
-
-
-        let user = await User.create({ name, email, role, password: hashpassword })
-
-        res.status(200).json({
+        return res.status(201).json({
             success: true,
-            message: 'user created successfully....',
-            user
-        })
-
+            message: "User created successfully.",
+            user: newUser
+        });
 
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'internal server error', error
-        })
-    }
-}
+        console.log(error);
 
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error.",
+            error: error.message
+        });
+    }
+};
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
+
+        // Validation
         if (!email || !password) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: 'data not found for login....'
-            })
+                message: "Email and password are required."
+            });
         }
 
-        let user = await User.findOne({email})
+        // Find user
+        const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).josn({
-                success: false,
-                message: 'user not found  by this  email id ...'
-            })
-        }
-
-
-
-
-        if (await bcrypt.compare(password, user.password)) {
-
-            let token = jsonwebtoken.sign({ userid: user._id }, 'studentKey', { expiresIn: '3d' })
-
-
-            res.cookie('tokenCookie', token, { maxAage: 3 * 24 * 60 * 60 * 1000 })
-                .status(200).json({
-                    success: true,
-                    token,
-                    message: 'user created successfully....'
-                })
-
-        } else {
             return res.status(401).json({
-                message: 'invalid password..',
-                success: false
-            })
+                success: false,
+                message: "User not found."
+            });
         }
 
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid password."
+            });
+        }
+
+        // Generate JWT Token
+        const token = jsonwebtoken.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET || "studentKey",
+            { expiresIn: "3d" }
+        );
+
+        // Remove password from response
+        const loggedInUser = user.toObject();
+        delete loggedInUser.password;
+
+        // Send Cookie
+        return res
+            .cookie("tokenCookie", token, {
+                httpOnly: true,
+                maxAge: 3 * 24 * 60 * 60 * 1000
+            })
+            .status(200)
+            .json({
+                success: true,
+                message: "Login successful.",
+                token,
+                user: loggedInUser
+            });
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({
+        console.log(error);
+
+        return res.status(500).json({
             success: false,
-            message: 'failed to login',error
-        })
+            message: "Failed to login.",
+            error: error.message
+        });
     }
-}
+};
 
-
-
-
-
-
-export { signup, login }
-
-
+export { signup, login };
