@@ -1,0 +1,65 @@
+.add-book-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 20px;
+}
+
+.add-book-card{
+    width:100%;
+    max-width:600px;
+    background:white;
+    padding:35px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+}
+
+.add-book-card h1{
+    text-align:center;
+    color:#2563eb;
+    margin-bottom:8px;
+}
+
+.add-book-card p{
+    text-align:center;
+    color:#6b7280;
+    margin-bottom:25px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#374151;
+}
+
+.form-group input{
+    width:100%;
+}
+
+.add-btn{
+    width:100%;
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:14px;
+    border-radius:8px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.add-btn:hover{
+    background:#15803d;
+}
+
+@media(max-width:768px){
+
+    .add-book-card{
+        padding:25px;
+    }
+
+}

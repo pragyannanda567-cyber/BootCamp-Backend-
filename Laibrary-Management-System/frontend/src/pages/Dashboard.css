@@ -1,0 +1,143 @@
+.dashboard{
+    padding:40px;
+    min-height:100vh;
+    background:#f1f5f9;
+}
+
+.dashboard h1{
+    color:#1e293b;
+    margin-bottom:8px;
+    font-size:34px;
+    font-weight:700;
+}
+
+.dashboard p{
+    color:#64748b;
+    margin-bottom:30px;
+    font-size:16px;
+}
+
+.stats{
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-bottom:40px;
+}
+
+.card{
+    flex:1;
+    min-width:250px;
+    padding:30px;
+    border-radius:18px;
+    color:white;
+    box-shadow:0 12px 30px rgba(0,0,0,0.12);
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card h2{
+    font-size:42px;
+    margin-bottom:12px;
+    font-weight:bold;
+}
+
+.card p{
+    color:white;
+    margin:0;
+    font-size:18px;
+    opacity:0.95;
+}
+
+.blue{
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+}
+
+.green{
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.orange{
+    background:linear-gradient(135deg,#ea580c,#fb923c);
+}
+
+.actions{
+    margin-top:20px;
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.actions h2{
+    margin-bottom:20px;
+    color:#1e293b;
+}
+
+.action-buttons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.action-buttons button{
+    padding:14px 30px;
+    border:none;
+    border-radius:12px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.action-buttons button:hover{
+    background:#1d4ed8;
+    transform:scale(1.05);
+}
+
+/* ---------------- Recent Activity ---------------- */
+
+.activity{
+    margin-top:40px;
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.activity h2{
+    color:#1e293b;
+    margin-bottom:20px;
+}
+
+.activity ul{
+    list-style:none;
+    padding:0;
+}
+
+.activity li{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 0;
+    border-bottom:1px solid #e5e7eb;
+    color:#475569;
+}
+
+.activity li:last-child{
+    border-bottom:none;
+}
+
+/* ---------------- Dashboard Footer ---------------- */
+
+.dashboard-footer{
+    margin-top:40px;
+    text-align:center;
+    color:#64748b;
+    font-size:14px;
+}
